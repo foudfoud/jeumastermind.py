@@ -1,0 +1,177 @@
+from itertools import combinations
+import random
+import time
+
+#génere taille et couleur
+def generate_code(taille, colors):
+    combination = [random.choice(colors) for _ in range(taille)]
+    return combination
+
+#explique les règles
+def explain_rules():
+    print("Bienvenue dans le jeu Mastermind")
+    time.sleep(2)
+    print("Le but du jeu est de deviner le code secret composé de couleurs en utilisant le moins de tentatives possibles.")
+    time.sleep(2)
+    print("Les couleurs possibles sont généralement représentées par des lettres, telles que R pour rouge, G pour vert, B pour bleu, Y pour jaune, etc.")
+    time.sleep(2)
+    print("Le code secret est une combinaison de ces couleurs, par exemple RGYB.")
+    time.sleep(2)
+    print("Le joueur dispose de 10 tentatives pour deviner le code secret.")
+    time.sleep(2)
+    print("Après chaque proposition, le joueur reçoit des indications sur sa tentative.")
+    time.sleep(2)
+    print("Chaque couleur bien placée dans la proposition est indiquée par un pion noir.")
+    time.sleep(2)
+    print("Chaque couleur présente dans le code secret mais mal placée est indiquée par un pion blanc.")
+    time.sleep(2)
+    print("Utiliser ces indications pour affiner vos prochaines propositions et tenter de trouver le code secret.")
+    time.sleep(2)
+    print("Le jeu se poursuit jusqu’à ce que le joueur trouve le code secret ou épuise ses 10 tentatives.")
+    time.sleep(2)
+    print("Amusez-vous bien !")
+
+
+import tkinter as tk
+
+root= tk.Tk()
+root.title("Mastermind")
+
+#création d'un bouton play qui lance le jeu
+bouton_play = tk.Button(root,text="Play")
+bouton_play.grid()
+bouton_right = tk.Button(root, text="Right")
+bouton_right.grid(row=1, comumn=3)
+bouton_left = tk.Button(root,text="Left")
+bouton_left.grid(row=1, column=0)
+bouton_up = tk.Button(root, text = "Up")
+bouton_up.grid(row=0, column=1)
+bouton_down = tk.Button(root, text = "Down")
+bouton_down.grid(row=2, column=1)
+
+#création du nom
+def player_name():
+    name = input("Entrez votre nom : ")
+    return name
+
+#lancement du jeu
+pseudo=player_name
+def countdown(seconds):
+    print(pseudo,"Le jeu va commencer dans…")
+    for i in range(seconds, 0, -1):
+        print(i)
+        time.sleep(1)
+    print("C’est parti !")
+
+import tkinter as tk
+
+#création de fenetre graphique des boutons de couleur
+class InterfaceSélectionCouleur:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Sélecteur de Couleur")
+        self.couleurs = ["rouge", "bleu", "vert", "jaune", "orange", "violet"]
+        self.couleur_sélectionnée = tk.StringVar()
+
+        self.créer_widgets()
+
+    def créer_widgets(self):
+        tk.Label(self.root, text="Sélectionnez une couleur :").pack()
+
+        for couleur in self.couleurs:
+            tk.Button(self.root, bg=couleur, width=10, height=2, text=couleur, command=lambda c=couleur: self.couleur_sélectionnée.set(c)).pack(pady=5)
+
+        tk.Label(self.root, text="Couleur sélectionnée :").pack()
+        tk.Label(self.root, textvariable=self.couleur_sélectionnée).pack()
+
+    def exécuter(self):
+        self.root.mainloop()
+
+if __name__ == "__main__":
+    sélecteur_couleur = InterfaceSélectionCouleur()
+    sélecteur_couleur.exécuter()
+
+
+#fontion qui vérifie l'emplacement et les combinaisons de couleur
+def vérifier_proposition(proposition, combinaison_secrète):
+    """Vérifie la proposition de l'utilisateur par rapport à la combinaison secrète."""
+
+    bien_placés = 0
+    mal_placés = 0
+    proposition_copie = proposition[:]  # Copie de la proposition pour éviter de modifier l'original
+    combinaison_copie = combinaison_secrète[:]  # Copie de la combinaison secrète
+
+    # Vérification des éléments bien placés
+    for i in range(len(proposition)):
+        if proposition[i] == combinaison_secrète[i]:
+            bien_placés += 1
+            # Marquer l'élément pour ne pas le compter comme mal placé
+            proposition_copie[i] = None
+            combinaison_copie[i] = None
+
+    # Vérification des éléments corrects mais mal placés
+    for i in range(len(proposition)):
+        if proposition_copie[i] is not None and proposition_copie[i] in combinaison_copie:
+            mal_placés += 1
+            # Marquer l'élément pour éviter de le compter plusieurs fois
+            combinaison_copie[combinations]
+
+import tkinter as tk
+from random import sample, randint
+
+# Définition des couleurs possibles
+couleurs = ['rouge', 'bleu', 'vert', 'jaune', 'blanc', 'noir']
+# Génération d'une combinaison secrète de 4 couleurs sans doublons
+combinaison_secrete = sample(couleurs, 4)
+
+# Initialisation du nombre d'essais
+nombre_essais = 10
+
+# Fonction pour démarrer une nouvelle partie
+def nouvelle_partie():
+    global combinaison_secrete, nombre_essais
+    combinaison_secrete = sample(couleurs, 4)
+    nombre_essais = 10
+    label_resultat.config(text="Bonne chance!")
+    for entree in entrees:
+        entree.delete(0, tk.END)
+    bouton_verifier.config(state=tk.NORMAL)
+
+# Fonction pour vérifier la supposition de l'utilisateur
+def verifier_supposition():
+    global nombre_essais
+    supposition = [e.get().lower() for e in entrees]
+    bien_place = sum(a == b for a, b in zip(supposition, combinaison_secrete))
+    mal_place = sum(min(supposition.count(c), combinaison_secrete.count(c)) for c in set(supposition)) - bien_place
+    nombre_essais -= 1
+    if bien_place == 4:
+        label_resultat.config(text="Félicitations! Vous avez trouvé la combinaison!")
+        bouton_verifier.config(state=tk.DISABLED)
+    elif nombre_essais > 0:
+        label_resultat.config(text=f"Bien placé: {bien_place}, Mal placé: {mal_place}. Il vous reste {nombre_essais} essais.")
+    else:
+        label_resultat.config(text="Désolé, vous avez épuisé tous vos essais. La combinaison était " + ', '.join(combinaison_secrete) + ".")
+        bouton_verifier.config(state=tk.DISABLED)
+
+# Configuration de l'interface graphique
+fenetre = tk.Tk()
+fenetre.title("Mastermind")
+
+# Création des champs d'entrée pour les couleurs
+entrees = [tk.Entry(fenetre, width=10) for _ in range(4)]
+for i, e in enumerate(entrees):
+    e.grid(row=0, column=i)
+
+# Bouton pour soumettre la supposition
+bouton_verifier = tk.Button(fenetre, text="Vérifier", command=verifier_supposition)
+bouton_verifier.grid(row=1, column=0, columnspan=4)
+
+# Bouton pour démarrer une nouvelle partie
+bouton_nouveau = tk.Button(fenetre, text="Nouvelle Partie", command=nouvelle_partie)
+bouton_nouveau.grid(row=1, column=4, columnspan=2)
+
+# Label pour afficher le résultat
+label_resultat = tk.Label(fenetre, text="Bonne chance!")
+label_resultat.grid(row=2, column=0, columnspan=6)
+
+fenetre.mainloop()
